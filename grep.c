@@ -344,7 +344,7 @@ void onhup(int n) {
 void error(char *s) {
 	int c;
 
-	wrapp = 0;
+
 	listf = 0;
 	listn = 0;
 	putchr('?');

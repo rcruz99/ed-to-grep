@@ -1,0 +1,10 @@
+e rings.txt
+,p
+1,5
+g/ing
+g/en
+g/^On
+g/ie.$
+g/[3-5]
+g/[dl]ie
+q
