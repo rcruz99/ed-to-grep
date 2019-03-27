@@ -6,27 +6,16 @@
 #include "grep.h"
 
 int main(int argc, char *argv[]) {
-	char *p1, *p2;
-	SIG_TYP oldintr;
+	while (argc > 2){
+		readfile(argv[2]);
+	}
 
-	oldquit = signal(SIGQUIT, SIG_IGN);
-	oldhup = signal(SIGHUP, SIG_IGN);
-	oldintr = signal(SIGINT, SIG_IGN);
-	if (signal(SIGTERM, SIG_IGN) == SIG_DFL)
-		signal(SIGTERM, quit);
-	argv++;
+
 	zero = (unsigned *)malloc(nlall*sizeof(unsigned));
-	tfname = mktemp(tmpXXXXX);
-	init();
-	if (oldintr!=SIG_IGN)
-		signal(SIGINT, onintr);
-	if (oldhup!=SIG_IGN)
-		signal(SIGHUP, onhup);
-	setjmp(savej);
-	commands();
-	quit(0);
+
 	return 0;
 }
+void readfile(const char *)
 
 void commands(void) {
 	unsigned int *a1;
