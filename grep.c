@@ -10,12 +10,33 @@ int main(int argc, char *argv[]) {
 		readfile(argv[2]);
 	}
 
-
 	zero = (unsigned *)malloc(nlall*sizeof(unsigned));
 
 	return 0;
 }
-void readfile(const char *)
+void readfile(const char* c){
+	setnoaddr();
+	if (vflag && fchange) {
+		fchange = 0;
+		error(Q);
+	}
+	filename(c);
+	init();
+	addr2 = zero;
+
+	if ((io = open(file, 0)) < 0) {
+		lastc = '\n';
+		error(file);
+	}
+	setwide();
+	squeeze(0);
+	ninbuf = 0;
+	c = zero != dol;
+	append(getfile, addr2);
+	exfile();
+	fchange = c;
+	
+}
 
 void commands(void) {
 	unsigned int *a1;
