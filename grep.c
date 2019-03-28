@@ -5,25 +5,48 @@
 #include <setjmp.h>
 #include "grep.h"
 
-int main(int argc, char *argv[]) {
-	while (argc > 2){
-		readfile(argv[2]);
+int main(int argc, const char *argv[]) {
+	char *p1, *p2;
+SIG_TYP oldintr;
+
+oldquit = signal(SIGQUIT, SIG_IGN);
+oldhup = signal(SIGHUP, SIG_IGN);
+oldintr = signal(SIGINT, SIG_IGN);
+if (signal(SIGTERM, SIG_IGN) == SIG_DFL)
+	signal(SIGTERM, quit);
+while(argc > 2){
+	readfile(argv[2]);
+	if(argc == 1){
+		newline();
+		print();
 	}
-
-	zero = (unsigned *)malloc(nlall*sizeof(unsigned));
-
-	return 0;
 }
-void readfile(const char* c){
+zero = (unsigned *)malloc(nlall*sizeof(unsigned));
+tfname = mktemp(tmpXXXXX);
+init();
+if (oldintr!=SIG_IGN)
+	signal(SIGINT, onintr);
+if (oldhup!=SIG_IGN)
+	signal(SIGHUP, onhup);
+setjmp(savej);
+commands();
+quit(0);
+return 0;
+}
+
+void readfile(const char* s){
+	//case e
+	int c;
 	setnoaddr();
 	if (vflag && fchange) {
 		fchange = 0;
 		error(Q);
 	}
-	filename(c);
+	filename(s);
 	init();
 	addr2 = zero;
 
+	//caseread
 	if ((io = open(file, 0)) < 0) {
 		lastc = '\n';
 		error(file);
@@ -35,7 +58,12 @@ void readfile(const char* c){
 	append(getfile, addr2);
 	exfile();
 	fchange = c;
-	
+}
+
+char* _strcpy(char* s, const char* t){
+  char* p = s;
+  while((*s++ == *t++)){ }
+  return p;
 }
 
 void commands(void) {
@@ -86,7 +114,7 @@ void commands(void) {
 			fchange = 0;
 			error(Q);
 		}
-		filename(c);
+		// filename(c);
 		init();
 		addr2 = zero;
 		goto caseread;
@@ -286,40 +314,9 @@ void newline(void) {
 	error(Q);
 }
 
-void filename(int comm) {
-	char *p1, *p2;
-	int c;
-
-	count = 0;
-	c = getchr();
-	if (c=='\n' || c==EOF) {
-		p1 = savedfile;
-		if (*p1==0 && comm!='f')
-			error(Q);
-		p2 = file;
-		while (*p2++ = *p1++)
-			;
-		return;
-	}
-	if (c!=' ')
-		error(Q);
-	while ((c = getchr()) == ' ')
-		;
-	if (c=='\n')
-		error(Q);
-	p1 = file;
-	do {
-		if (p1 >= &file[sizeof(file)-1] || c==' ' || c==EOF)
-			error(Q);
-		*p1++ = c;
-	} while ((c = getchr()) != '\n');
-	*p1++ = 0;
-	if (savedfile[0]==0 || comm=='e' || comm=='f') {
-		p1 = savedfile;
-		p2 = file;
-		while (*p1++ = *p2++)
-			;
-	}
+void filename(const char * c) {
+	_strcpy(file, c);
+	_strcpy(savedfile, c);
 }
 
 void exfile(void) {
