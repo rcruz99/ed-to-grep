@@ -3,7 +3,7 @@
 #define	FNSIZE	128
 #define	LBSIZE	4096
 #define	ESIZE	256
-#define	GBSIZE 256
+#define	GBSIZE	256
 #define	NBRA	5
 #define	KSIZE	9
 #define	CBRA	1

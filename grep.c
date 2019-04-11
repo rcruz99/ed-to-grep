@@ -118,7 +118,8 @@ void readfile(const char* s){	filename(s);
 
 void printcommand(void) {  int c;  char lastsep;
   for (;;) {  unsigned int* a1;
-    if (pflag) { pflag = 0;  addr1 = addr2 = dot;
+    if (pflag) { pflag = 0;
+      addr1 = addr2 = dot;
       print(); }
     c = '\n';
     for (addr1 = 0;;) {  lastsep = c;
@@ -197,8 +198,7 @@ int getnum(void) {
 }
 
 void setwide(void) {	if (!given) { addr1 = zero + (dol>zero);
-  addr2 = dol;}
-}
+  addr2 = dol;}}
 
 void setnoaddr(void) { if (given) {error(Q);}}
 
