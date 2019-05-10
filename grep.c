@@ -6,42 +6,42 @@
 #include "grep.h"
 #include <glob.h>
 
-char  Q[]  = "";
-int  peekc;
-int  lastc;
-char  savedfile[FNSIZE];
-char  file[FNSIZE];
-char  linebuf[LBSIZE];
-char  expbuf[ESIZE+4];
-int  given;
-unsigned int  *addr1, *addr2;
-unsigned int  *dot, *dol, *zero;
-char  genbuf[LBSIZE];
-long  count;
-char  *nextip;
-char  *linebp;
-int  ninbuf;
-int  io;
-int  pflag;
-int  vflag  = 1;
-int  oflag;
-int  listf;
-int  listn;
-char  *globp;
-int  tfile  = -1;
-int  tline;
-char  *tfname;
-char  *loc1;
-char  *loc2;
-char  obuff[BLKSIZE];
-int  nleft;
-int  names[26];
-int  nbra;
-int  fchange;
-unsigned nlall = 128;
+static char  Q[]  = "";
+static int  peekc;
+static int  lastc;
+static char  savedfile[FNSIZE];
+static char  file[FNSIZE];
+static char  linebuf[LBSIZE];
+static char  expbuf[ESIZE+4];
+static int  given;
+static unsigned int  *addr1, *addr2;
+static unsigned int  *dot, *dol, *zero;
+static char  genbuf[LBSIZE];
+static long  count;
+static char  *nextip;
+static char  *linebp;
+static int  ninbuf;
+static int  io;
+static int  pflag;
+static int  vflag  = 1;
+static int  oflag;
+static int  listf;
+static int  listn;
+static char  *globp;
+static int  tfile  = -1;
+static int  tline;
+static char  *tfname;
+static char  *loc1;
+static char  *loc2;
+static char  obuff[BLKSIZE];
+static int  nleft;
+static int  names[26];
+static int  nbra;
+static int  fchange;
+static unsigned nlall = 128;
 
 char  *mktemp(char *);
-char  tmpXXXXX[50] = "/tmp/eXXXXX";
+static char  tmpXXXXX[50] = "/tmp/eXXXXX";
 
 void search_file(const char* filename, const char* searchfor) {
   printf("\n");
@@ -63,7 +63,7 @@ void process_dir(const char* dir, const char* searchfor, void (*fp)(const char*,
   drawline();
   drawline();
   printf("processing files in %s...\n\n", dir);
-  for (int i = 0; i < results.gl_pathc; ++i) {const char* filename = results.gl_pathv[i];
+  for (size_t i = 0; i < results.gl_pathc; ++i) {const char* filename = results.gl_pathv[i];
     fp(filename, searchfor);
   }
   globfree(&results);
@@ -83,27 +83,6 @@ int main(int argc, char *argv[]) {
   exit(1);
 }
 
-#define BUFSIZE 100
-char buf[BUFSIZE];
-int bufp = 0;
-
-int getch_(void) {  char c = (bufp > 0) ? buf[--bufp] : getchar();
-  lastc = c & 0177;
-  return lastc;
-}
-
-void ungetch_(int c) {  if (bufp >= BUFSIZE) { printf("ungetch: overflow\n");
-} else { buf[bufp++] = c;}
-}
-
-void search_(const char* re) {char buf[GBSIZE];
-  snprintf(buf, sizeof(buf), "/%s\n", re);
-  printf("g%s", buf);
-  const char* p = buf + strlen(buf) - 1;
-  while (p >= buf) { ungetch_(*p--); }
-  global(1);
-}
-
 void drawline(){	printf("------------------------------------------------------------------\n");}
 
 void readfile(const char* s){	filename(s);
@@ -116,7 +95,7 @@ void readfile(const char* s){	filename(s);
   exfile();
 }
 
-void printcommand(void) {  int c;  char lastsep;
+void printcommand(void) { char c;  char lastsep;
   for (;;) {  unsigned int* a1;
     if (pflag) { pflag = 0;
       addr1 = addr2 = dot;
@@ -478,8 +457,8 @@ void puts_(char *sp) {
 	putchr('\n');
 }
 
-char	line[70];
-char	*linp	= line;
+static char	line[70];
+static char	*linp	= line;
 
 void putchr(int ac) {
 	char *lp = linp;
@@ -489,4 +468,25 @@ void putchr(int ac) {
     write(oflag?2:1, line, lp-line);
     return;}
 	linp = lp;
+}
+
+#define BUFSIZE 100
+static char buf[BUFSIZE];
+static int bufp = 0;
+
+int getch_(void) {  int c = (bufp > 0) ? buf[--bufp] : getchar();
+  lastc = c & 0177;
+  return lastc;
+}
+
+void ungetch_(char c) {  if (bufp >= BUFSIZE) { printf("ungetch: overflow\n");
+} else { buf[bufp++] = c;}
+}
+
+void search_(const char* re) {char buf[GBSIZE];
+  snprintf(buf, sizeof(buf), "/%s\n", re);
+  printf("g%s", buf);
+  const char* p = buf + strlen(buf) - 1;
+  while (p >= buf) { ungetch_(*p--); }
+  global(1);
 }
