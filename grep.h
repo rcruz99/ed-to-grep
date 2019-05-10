@@ -53,7 +53,7 @@ void setnoaddr(void);
 void squeeze(int i);
 int getch_(void);
 void search_(const char* re);
-void ungetch_(int c);
+void ungetch_(char c);
 void drawline(void);
 void printcommand(void);
 void search_file(const char* filename, const char* searchfor);
